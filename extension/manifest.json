@@ -1,0 +1,9 @@
+{
+  "manifest_version": 3,
+  "name": "Parity",
+  "version": "1.0.0",
+  "description": "Compare your web implementation against your Figma design.",
+  "background": {
+    "service_worker": "background/background.js"
+  }
+}
