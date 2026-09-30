@@ -3,7 +3,12 @@
   "name": "Parity",
   "version": "1.0.0",
   "description": "Compare your web implementation against your Figma design.",
+  "action": {
+    "default_title": "Parity",
+    "default_popup": "popup/popup.html"
+  },
   "background": {
     "service_worker": "background/background.js"
-  }
+  },
+  "devtools_page": "devtools/devtools.html"
 }
