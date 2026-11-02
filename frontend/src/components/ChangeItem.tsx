@@ -1,5 +1,6 @@
 import type { Change, Part } from "../types/design";
 import PillButton from "./PillButton";
+import ConfirmCommit from "./ConfirmCommit";
 import PreviewSample from "./PreviewSample";
 
 const luma = (hex: string) => {
@@ -38,9 +39,13 @@ export default function ChangeItem({ change, part, subtitle, open, done, onPrevi
         <PillButton variant={open ? "ghostOn" : "ghost"} aria-expanded={open} onClick={onPreview}>
           Preview
         </PillButton>
-        <PillButton variant={done ? "soft" : "primary"} onClick={onCommit} className="sm:min-w-[84px]">
-          {done ? "Committed ✓" : "Commit"}
-        </PillButton>
+        <ConfirmCommit
+          done={done}
+          doneLabel="Committed ✓"
+          onConfirm={onCommit}
+          onUndo={onCommit}
+          className="sm:min-w-[84px]"
+        />
       </div>
       {open && (
         <div className="flex gap-2 pb-2">

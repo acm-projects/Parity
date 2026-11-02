@@ -6,6 +6,7 @@ import Legend from "./Legend";
 
 const VIEW_HEIGHT = 140;
 const CHART_SIZE = 120;
+const SPARK = "M12 1 Q14 10 23 12 Q14 14 12 23 Q10 14 1 12 Q10 10 12 1Z";
 
 export interface Slice {
   id: string;
@@ -30,7 +31,7 @@ export const overviewCard = (r: Report): CardData => ({
   remainderLabel: r.remainderLabel,
 });
 
-/** Detail card: one part on its own. 14 of 30 points shows as 47%. */
+/** Detail card: one part on its own. 22 of 30 points shows as 73%. */
 export const partCard = (r: Report, p: Part): CardData => {
   const pct = Math.round((p.share / p.weight) * 100);
   return {
@@ -55,7 +56,7 @@ export default function ScoreBreakdown({ card, onSelect }: Props) {
   return (
     <section
       aria-label={card.title}
-      className="rounded-2xl border border-[var(--card-border)] bg-[linear-gradient(160deg,var(--card)_0%,var(--card-grad)_100%)] p-4 shadow-[0_16px_36px_rgba(90,50,198,.24),0_2px_6px_rgba(90,50,198,.10)]"
+      className="rounded-2xl border border-[var(--card-border)] bg-[linear-gradient(160deg,var(--card)_0%,var(--card-grad)_100%)] px-4 py-5 shadow-[0_16px_36px_rgba(90,50,198,.24),0_2px_6px_rgba(90,50,198,.10)]"
     >
       <div className="flex items-center gap-4" style={{ minHeight: VIEW_HEIGHT }}>
         <PieChart
@@ -68,8 +69,16 @@ export default function ScoreBreakdown({ card, onSelect }: Props) {
           centerValue={`${hovered ? hovered.value : card.total}%`}
           centerLabel={hovered ? hovered.name : card.totalLabel}
         />
-        <div className="min-w-0 flex-1 space-y-2">
-          <h2 className="text-base font-bold text-[var(--ink)]">{card.title}</h2>
+        <div className="min-w-0 flex-1 space-y-3 [container-type:inline-size]">
+          <h2 className="relative inline-block whitespace-nowrap pr-6 text-[clamp(11px,7.4cqw,16px)] font-bold leading-tight text-[var(--ink)]">
+            {card.title}
+            <svg viewBox="0 0 24 24" width="16" height="16" className="pointer-events-none absolute -top-1.5 right-0" aria-hidden="true">
+              <path d={SPARK} fill="var(--p4)" />
+            </svg>
+            <svg viewBox="0 0 24 24" width="8" height="8" className="pointer-events-none absolute -bottom-1 right-3" aria-hidden="true">
+              <path d={SPARK} fill="var(--p3)" />
+            </svg>
+          </h2>
           <Legend
             slices={card.slices}
             rest={rest}

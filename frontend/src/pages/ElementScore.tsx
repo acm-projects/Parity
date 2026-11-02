@@ -1,5 +1,6 @@
 import { useState } from "react";
 import PillButton from "../components/PillButton";
+import ConfirmCommit from "../components/ConfirmCommit";
 import ScoreBreakdown, { type CardData } from "../components/ScoreBreakdown";
 import type { ElementSnapshot } from "../lib/inspect";
 import { scoreAccessibility, scoreDesign, type PartResult, type ScoreResult } from "../lib/score";
@@ -101,13 +102,13 @@ function Findings({ parts, goalLabel }: { parts: PartResult[]; goalLabel: string
                   Preview
                 </PillButton>
                 {fix ? (
-                  <PillButton
-                    variant={isDone ? "soft" : "primary"}
-                    onClick={() => toggleDone(p.id)}
+                  <ConfirmCommit
+                    done={isDone}
+                    doneLabel="Committed ✓"
+                    onConfirm={() => toggleDone(p.id)}
+                    onUndo={() => toggleDone(p.id)}
                     className="sm:min-w-[84px]"
-                  >
-                    {isDone ? "Committed ✓" : "Commit"}
-                  </PillButton>
+                  />
                 ) : (
                   <span className="rounded-full bg-[var(--badge-bg)] px-2.5 py-0.5 text-center text-xs font-semibold text-[var(--badge-text)] sm:min-w-[84px]">
                     Passing ✓
@@ -127,3 +128,58 @@ function Findings({ parts, goalLabel }: { parts: PartResult[]; goalLabel: string
       {skipped.length > 0 && (
         <p className="mt-2 border-t border-[var(--line)] pt-2 text-[10px] text-[var(--muted)]">
           Not applicable to this element: {skipped.join(", ")}.
+        </p>
+      )}
+    </section>
+  );
+}
+
+interface Props {
+  el: ElementSnapshot;
+  tab: "design" | "accessibility";
+  onBack: () => void;
+}
+
+export default function ElementScore({ el, tab, onBack }: Props) {
+  const isDesign = tab === "design";
+  const result = isDesign ? scoreDesign(el, specFor(el)) : scoreAccessibility(el);
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={onBack}
+          className="flex-none cursor-pointer text-[11px] font-semibold text-[var(--p1)]"
+        >
+          &#8249; Back
+        </button>
+        <span
+          className="inline-flex min-w-0 items-center gap-1.5 rounded-full bg-[var(--card)] px-3 py-1 text-[11px] font-semibold text-[var(--ink2)]"
+          title={el.text ? `${el.selector} — ${el.text}` : el.selector}
+        >
+          <code className="flex-none rounded bg-[var(--card-tint)] px-1 text-[10px] text-[var(--p1)]">&lt;{el.tag}&gt;</code>
+          <span className="truncate">{el.selector}</span>
+          {el.text && <span className="truncate font-normal text-[var(--muted)]">“{el.text}”</span>}
+        </span>
+      </div>
+
+      <ScoreBreakdown
+        card={toCard(
+          isDesign ? "Design Similarity Score" : "Accessibility Score",
+          result,
+          isDesign ? "Similar" : "Accessible"
+        )}
+      />
+
+      {!isDesign && result.checked === 0 && (
+        <p className="px-1 text-[11px] text-[var(--muted)]">
+          Nothing here to check except the page language, since this element has no text, image or control of its own.
+          Select a button, link, image or heading to see more.
+        </p>
+      )}
+
+      <Findings parts={result.parts} goalLabel={isDesign ? "FIGMA" : "GOAL"} />
+    </div>
+  );
+}

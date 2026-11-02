@@ -11,10 +11,10 @@ interface Props {
 
 export default function Legend({ slices, rest, restLabel, active, onHover, onSelect }: Props) {
   return (
-    <ul className="list-none">
+    <ul className="list-none space-y-0.5">
       {slices.map((s, i) => {
         const cls =
-          "flex w-full items-center gap-2 rounded-md px-1.5 py-1 text-left text-xs font-semibold transition";
+          "flex w-full items-center gap-2.5 rounded-md px-2 py-1 text-left text-[clamp(10.5px,6.6cqw,13px)] font-semibold transition";
         const style = {
           opacity: active === null || active === i ? 1 : 0.45,
           background: active === i ? "var(--card-soft)" : "transparent",
@@ -23,7 +23,7 @@ export default function Legend({ slices, rest, restLabel, active, onHover, onSel
           <>
             <i className="h-2.5 w-2.5 flex-none rounded-sm" style={{ background: s.color }} />
             <span className="flex-1">{s.name}</span>
-            <span>{s.value}%</span>
+            <span className="tabular-nums">{s.value}%</span>
           </>
         );
         return (
@@ -50,10 +50,10 @@ export default function Legend({ slices, rest, restLabel, active, onHover, onSel
         );
       })}
       {rest > 0 && (
-        <li className="flex items-center gap-2 px-1.5 py-1 text-xs font-semibold text-[var(--muted)]">
+        <li className="mt-1 flex items-center gap-2.5 border-t border-dashed border-[var(--track-line)] px-2 pb-0.5 pt-2 text-[clamp(10.5px,6.6cqw,13px)] font-semibold text-[var(--muted)]">
           <i className="h-2.5 w-2.5 flex-none rounded-sm border border-[var(--track-line)] bg-[var(--track)]" />
           <span className="flex-1">{restLabel}</span>
-          <span>{rest}%</span>
+          <span className="tabular-nums">{rest}%</span>
         </li>
       )}
     </ul>

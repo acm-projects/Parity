@@ -9,10 +9,10 @@ export const design: Report = {
   remainderLabel: "Remaining differences",
   detailRemainderLabel: "Different",
   parts: [
-    { id: "fonts",   name: "Fonts",   share: 14, weight: 30, color: P1, fixLabel: "Font change" },
-    { id: "color",   name: "Color",   share: 12, weight: 25, color: P2, fixLabel: "Color change" },
-    { id: "spacing", name: "Spacing", share: 8,  weight: 20, color: P3, fixLabel: "Spacing change" },
-    { id: "sizing",  name: "Sizing",  share: 13, weight: 25, color: P4, fixLabel: "Sizing change" },
+    { id: "fonts",   name: "Fonts",   share: 22, weight: 30, color: P1, fixLabel: "Font change" },
+    { id: "color",   name: "Color",   share: 19, weight: 25, color: P2, fixLabel: "Color change" },
+    { id: "spacing", name: "Spacing", share: 14, weight: 20, color: P3, fixLabel: "Spacing change" },
+    { id: "sizing",  name: "Sizing",  share: 17, weight: 25, color: P4, fixLabel: "Sizing change" },
   ],
   changes: [
     { id: "d1",  title: "Fonts are different",        priority: "High priority",   partId: "fonts" },
