@@ -124,8 +124,7 @@ export default function Connecting({ ready, onDone, onCancel }: Props) {
 
   return (
     <Screen>
-      <div className="relative mx-auto my-auto h-[496px] w-[312px] flex-none overflow-hidden" aria-hidden="true">
-        <div ref={ref('lglow')} className="absolute rounded-full" style={{ left: 46, top: 120, width: 220, height: 220, background: 'radial-gradient(circle, rgba(124,92,255,.38) 0%, rgba(124,92,255,0) 68%)' }} />
+      <div className="relative mx-auto my-auto -translate-y-8 h-[496px] w-[312px] flex-none overflow-hidden" aria-hidden="true">        <div ref={ref('lglow')} className="absolute rounded-full" style={{ left: 46, top: 120, width: 220, height: 220, background: 'radial-gradient(circle, rgba(124,92,255,.38) 0%, rgba(124,92,255,0) 68%)' }} />
         <div ref={ref('lmg')} className="absolute rounded-full" style={{ left: 12, top: 22, width: 60, height: 60, background: 'radial-gradient(circle, rgba(240,178,94,.55) 0%, rgba(240,178,94,0) 70%)' }} />
         <svg ref={ref('lmoon')} viewBox="0 0 24 24" width="36" height="36" className="absolute" style={{ left: 24, top: 34 }}>
           <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" fill={CODE} />

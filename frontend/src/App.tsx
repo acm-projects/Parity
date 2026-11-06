@@ -138,9 +138,9 @@ export default function App() {
     return (
       <Connecting
         ready={loaded}
-        onDone={() => {
+                onDone={() => {
           setScreen("app");
-          goTab("design");
+          goTab("figma");
         }}
         onCancel={() => {
           setScreen("app");
