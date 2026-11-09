@@ -23,7 +23,7 @@ const SYNC = 5; // seconds per cycle
 const reduceMotion = () =>
   typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-export default function LandingPage({ onGithub, busy = false, error = '' }: { onGithub: () => void; busy?: boolean; error?: string }) {
+export default function LandingPage({ onGithub, busy = false, error = '', showAccountSwitch = false }: { onGithub: () => void; busy?: boolean; error?: string; showAccountSwitch?: boolean }) {
   const els = useRef<Record<string, HTMLElement | SVGElement | null>>({});
   const ref = (id: string) => (el: HTMLElement | SVGElement | null) => { els.current[id] = el; };
 
@@ -137,8 +137,13 @@ export default function LandingPage({ onGithub, busy = false, error = '' }: { on
             disabled={busy}
             className="flex h-14 w-full max-w-[360px] items-center justify-center gap-3 px-6 text-base font-bold shadow-[0_12px_28px_rgba(90,50,198,.35)] disabled:cursor-wait disabled:opacity-70"
           >
-            <GithubIcon size={22} />{busy ? 'Opening GitHub…' : 'Continue with GitHub'}
+            <GithubIcon size={22} />{busy ? 'Please wait…' : 'Continue with GitHub'}
           </PillButton>
+          {showAccountSwitch && (
+            <p className="m-0 max-w-[360px] text-center text-xs">
+              To use a different account, <a href="https://github.com/" target="_blank" rel="noopener noreferrer" className="font-semibold underline">switch accounts on GitHub</a>, then continue here.
+            </p>
+          )}
           {error && <p role="alert" className="m-0 max-w-[360px] text-center text-xs font-semibold text-[var(--err)]">{error}</p>}
 
           <p className="parity-hero-foot">Free for individuals &middot; No credit card needed</p>

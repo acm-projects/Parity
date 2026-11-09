@@ -5,7 +5,7 @@ import { useSelectedElement } from "./hooks/useSelectedElement";
 import { parseFigma, loadFigmaFile } from "./lib/figma";
 import { initialsOf } from "./lib/github";
 import { LIVE } from "./lib/config";
-import { onAuthChange, signInWithGitHub, syncAuth } from "./lib/auth";
+import { endSession, onAuthChange, signInWithGitHub, syncAuth } from "./lib/auth";
 import { ApiError, connectProject, getProject, me as getMe, refreshProject, selectFrame, type Project } from "./lib/api";
 import type { ElementSnapshot } from "./lib/inspect";
 import LandingPage from "./components/LandingPage";
@@ -65,7 +65,9 @@ export default function App() {
   useEffect(() => onAuthChange((auth) => setSession((s) => ({ ...s, auth }))), [setSession]);
 
   const signOut = () => {
-    syncAuth(null);
+    const logout = endSession();
+    setAuthError("");
+    setAuthBusy(true);
     setSession(EMPTY); // the theme is saved separately, so it survives sign out
     setProject(null);
     setScreen("landing");
@@ -73,6 +75,9 @@ export default function App() {
     setDetail(null);
     setAccount(false);
     setElement(null);
+    void logout.catch(() => {
+      setAuthError("Signed out on this device. Parity could not confirm sign-out with the server.");
+    }).finally(() => setAuthBusy(false));
   };
 
   // Returning users skip the landing page. Runs once, after the saved session has loaded.
@@ -211,6 +216,7 @@ export default function App() {
     return (
       <LandingPage
         onGithub={LIVE ? signInLive : () => setScreen("githubLogin")}
+        showAccountSwitch={LIVE}
         busy={authBusy}
         error={authError}
       />

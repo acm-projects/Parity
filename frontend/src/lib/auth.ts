@@ -16,6 +16,7 @@ export const getAuth = () => current;
 
 /** Tell this module who is signed in (e.g. after loading the saved session). Does not notify. */
 export const syncAuth = (a: Auth | null) => {
+  if (current !== a) inflight = null;
   current = a;
 };
 
@@ -69,11 +70,26 @@ export async function signInWithGitHub(): Promise<Auth> {
   return fromParams(params);
 }
 
+/** Clear the extension's credentials and end this Supabase session. */
+export async function endSession(): Promise<void> {
+  const auth = current;
+  syncAuth(null);
+  if (!auth) return;
+
+  const res = await fetch(`${SUPABASE_URL}/auth/v1/logout?scope=local`, {
+    method: "POST",
+    headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${auth.access}` },
+    signal: AbortSignal.timeout(8000),
+  });
+  if (!res.ok) throw new Error("Signed out of this extension, but Supabase could not confirm sign-out.");
+}
+
 /** Trades the refresh token for a new session. Calls made at the same time share one request. */
 export function refreshAuth(): Promise<Auth> {
   const old = current;
   if (!old?.refresh) return Promise.reject(new Error("Your session expired. Please sign in again."));
-  inflight ??= (async () => {
+  if (inflight) return inflight;
+  const pending = Promise.resolve().then(async () => {
     try {
       const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=refresh_token`, {
         method: "POST",
@@ -88,12 +104,14 @@ export function refreshAuth(): Promise<Auth> {
         expiresAt: d.expires_at ? d.expires_at * 1000 : Date.now() + (d.expires_in || 3600) * 1000,
         github: old.github, // GitHub tokens are not part of a refresh
       };
+      if (current !== old) throw new Error("Your session changed. Please sign in again.");
       current = next;
       listener?.(next);
       return next;
     } finally {
-      inflight = null;
+      if (inflight === pending) inflight = null;
     }
-  })();
-  return inflight;
+  });
+  inflight = pending;
+  return pending;
 }
