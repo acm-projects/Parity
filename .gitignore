@@ -1,0 +1,7 @@
+node_modules/
+.env
+.env.*
+!.env.example
+backend/.figma-cache/
+*.tsbuildinfo
+.DS_Store
