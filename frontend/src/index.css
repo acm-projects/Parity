@@ -1,1 +1,484 @@
 @import "tailwindcss";
+@import "@fontsource-variable/plus-jakarta-sans";
+
+/* lets you write dark:... classes */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* Parity design colors (light) */
+:root {
+  color-scheme: light;
+  --p1: #5a32c6;
+  --p2: #8f72f0;
+  --p3: #b7a3f5;
+  --p4: #efb87a;
+  --p5: #f7d9b4;
+  --fill: #5a32c6; /* solid fills: active tab, switches */
+  --ink: #1e1050;
+  --ink2: #3a2a7a;
+  --muted: #6b6490;
+  --line: #f0ecfb;
+  --ok: #3fbf7f;
+  --err: #d64545;
+  --track: #f6f2ff;
+  --track-line: #d2c6f7;
+
+  --page: #f3f0ff;
+  --card: #ffffff;
+  --card-soft: #f3f0ff;
+  --card-tint: #ede7ff;
+  --card-border: #e4dafd;
+  --card-grad: #f4efff;
+  --field: #ffffff;
+  --field-border: #d9d0f7;
+  --scroll-track: #f0ecfb;
+  --switch-off: #d9d0f7;
+  --badge-bg: #e7f6ee;
+  --badge-text: #1e6b45;
+  --bg-a: #ffd8be;
+  --bg-b: #b8b8ff;
+  --bg-base: #f8f7ff;
+}
+
+/* Dark theme: set on <html data-theme="dark"> by App.tsx */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --p1: #a99cf8;
+  --fill: #6c5ce7;
+  --ink: #f4f1ff;
+  --ink2: #d6d0f5;
+  --muted: #a39cc9;
+  --line: rgba(255, 255, 255, 0.09);
+  --err: #ff8080;
+  --track: #2a2552;
+  --track-line: #4a4380;
+
+  --page: #0f0c24;
+  --card: #221e47;
+  --card-soft: #2d2860;
+  --card-tint: #352f6e;
+  --card-border: #3a3470;
+  --card-grad: #1b1738;
+  --field: #17132f;
+  --field-border: #3d3770;
+  --scroll-track: #2a2552;
+  --switch-off: #3d3770;
+  --badge-bg: rgba(63, 191, 127, 0.18);
+  --badge-text: #7fe3b0;
+  --bg-a: #5a4249;
+  --bg-b: #4b3fa0;
+  --bg-base: #17142f;
+}
+
+/* Put this on an element that should stay light even in dark mode */
+.force-light {
+  --ink: #1e1050;
+  --ink2: #3a2a7a;
+  --muted: #6b6490;
+  --line: #f0ecfb;
+  --p1: #5a32c6;
+  color: #1e1050;
+}
+
+/* Global sizing */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Plus Jakarta Sans Variable", system-ui, sans-serif;
+  color: var(--ink);
+  background: var(--page);
+  overflow: hidden;
+}
+
+/* React root: fills the panel and scrolls when the content is taller */
+#root {
+  overflow-x: hidden;
+  overflow-y: auto;
+  container-type: size;
+  scrollbar-width: thin;
+  scrollbar-color: var(--p3) transparent;
+}
+
+/* Gradient background: covers the whole panel, however big it is */
+.parity-bg {
+  min-height: 100%;
+  background:
+    radial-gradient(circle at 0% 0%, var(--bg-a) 0%, transparent 45%),
+    radial-gradient(circle at 100% 100%, var(--bg-b) 0%, transparent 55%),
+    var(--bg-base);
+}
+
+/* Main app view: the background is full-bleed, .parity-inner holds the content */
+.parity-dashboard {
+  width: 100%;
+  min-width: 0;
+  min-height: 100%;
+}
+
+.parity-inner {
+  padding: 16px;
+}
+
+/* Full-screen steps (landing, login, connecting) */
+.parity-screen {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* Landing layout */
+.parity-landing {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* Cards and action buttons */
+.parity-landing-card,
+.parity-landing-actions {
+  width: 100%;
+  max-width: 300px;
+  min-width: 0;
+}
+
+/* Custom purple scrollbars */
+.scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scroll::-webkit-scrollbar-track {
+  background: var(--scroll-track);
+  border-radius: 3px;
+}
+
+.scroll::-webkit-scrollbar-thumb {
+  background: var(--p3);
+  border-radius: 3px;
+}
+
+.scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--p2);
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  .scroll {
+    scrollbar-width: thin;
+    scrollbar-color: var(--p3) var(--scroll-track);
+  }
+}
+
+/* Buttons */
+button {
+  cursor: pointer;
+}
+
+button:focus-visible {
+  outline: 2px solid var(--p2);
+  outline-offset: 2px;
+}
+
+input:focus-visible {
+  outline: none;
+}
+
+/* Short extension panels */
+@container (max-height: 700px) {
+  .parity-screen {
+    padding: 12px;
+  }
+
+  .parity-landing-card {
+    margin-top: 8px;
+    padding-bottom: 10px;
+  }
+
+  .parity-logo-stage {
+    height: 135px;
+  }
+
+  .parity-landing-actions {
+    margin-top: 10px;
+  }
+
+  .parity-landing-spacer {
+    flex-grow: 0;
+    min-height: 12px;
+  }
+}
+
+/* Very short panels */
+@container (max-height: 480px) {
+  .parity-screen {
+    padding: 10px;
+  }
+
+  .parity-landing-card {
+    margin-top: 4px;
+    padding-bottom: 8px;
+  }
+
+  .parity-logo-stage {
+    height: 115px;
+  }
+
+  .parity-landing-actions {
+    margin-top: 8px;
+  }
+
+  .parity-landing-spacer {
+    min-height: 8px;
+  }
+}
+
+/* Narrow extension panels */
+@container (max-width: 400px) {
+  .parity-screen {
+    padding: 10px;
+  }
+
+  .parity-inner {
+    padding: 10px;
+  }
+
+  .parity-landing {
+    padding-inline: 8px;
+  }
+
+  .parity-landing-card,
+  .parity-landing-actions {
+    max-width: 100%;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}
+
+/* =========================================================
+   Landing page redesign
+   ========================================================= */
+
+/* New tokens: light */
+:root {
+  --hero-a: var(--bg-a);
+  --hero-b: #f7c3d3;
+  --hero-c: var(--p3);
+  --hero-d: var(--bg-b);
+  --hero-glow: transparent;
+
+  --moon-a: var(--card);
+  --moon-b: var(--card);
+  --halo-1: rgba(255, 255, 255, 0.38);
+  --halo-2: rgba(255, 255, 255, 0.18);
+  --halo-peak-1: rgba(255, 255, 255, 0.6);
+  --halo-peak-2: rgba(255, 255, 255, 0.3);
+  --halo-shadow: rgba(90, 50, 198, 0.25);
+
+  --sparkle: #ffffff;
+  --pill-bg: color-mix(in srgb, var(--card) 75%, transparent);
+  --pill-border: transparent;
+}
+
+/* New tokens: dark */
+:root[data-theme="dark"] {
+  --hero-a: #2a1a45;
+  --hero-b: var(--bg-base);
+  --hero-c: var(--page);
+  --hero-d: var(--bg-b);
+  --hero-glow: color-mix(in srgb, var(--p5) 22%, transparent);
+
+  --moon-a: #dcd8e6;
+  --moon-b: #c3bed0;
+  --halo-1: rgba(205, 204, 214, 0.12);
+  --halo-2: rgba(205, 204, 214, 0.06);
+  --halo-peak-1: rgba(205, 204, 214, 0.22);
+  --halo-peak-2: rgba(205, 204, 214, 0.11);
+  --halo-shadow: rgba(190, 188, 200, 0.3);
+
+  --sparkle: var(--ink2);
+  --pill-bg: color-mix(in srgb, var(--card) 70%, transparent);
+  --pill-border: var(--card-border);
+}
+
+/* Full-panel background */
+.parity-hero-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 40% at 0% 0%, var(--hero-glow), transparent),
+    linear-gradient(172deg, var(--hero-a) 0%, var(--hero-b) 42%, var(--hero-c) 78%, var(--hero-d) 100%);
+}
+
+.parity-hero-bg svg {
+  position: absolute;
+  fill: var(--sparkle);
+}
+
+.parity-hero-bg .s1 { left: 13%; top: 15%; }
+.parity-hero-bg .s2 { right: 15%; top: 11%; }
+.parity-hero-bg .s3 { right: 10%; top: 46%; }
+.parity-hero-bg .s4 { left: 17%; top: 55%; }
+
+/* Layout */
+.parity-hero {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 auto;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(28px, 6cqh, 60px);
+  padding-block: 24px;
+  text-align: center;
+}
+
+/* Moon */
+.parity-moon-wrap {
+  --s: 1;
+  --size: calc(340px * var(--s));
+  position: relative;
+  flex: none;
+  width: var(--size);
+  height: var(--size);
+}
+
+.parity-moon,
+.parity-moon-halo {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+
+.parity-moon {
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle at 40% 35%, var(--moon-a) 0%, var(--moon-b) 100%);
+  box-shadow:
+    0 0 0 calc(var(--size) * 0.065) var(--halo-1),
+    0 0 0 calc(var(--size) * 0.15) var(--halo-2),
+    0 30px 80px var(--halo-shadow);
+}
+
+.parity-moon-halo {
+  box-shadow:
+    0 0 0 calc(var(--size) * 0.075) var(--halo-peak-1),
+    0 0 0 calc(var(--size) * 0.18) var(--halo-peak-2);
+}
+
+.parity-logo-fit {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 300px;
+  height: 200px;
+  transform: translate(-50%, -50%) scale(calc(var(--s) * 0.8));
+}
+
+/* Copy */
+.parity-hero-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+  max-width: 440px;
+}
+
+.parity-hero-title {
+  margin: 0;
+  font-size: clamp(24px, 6cqw, 38px);
+  line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+}
+
+.parity-hero-sub {
+  margin: 0;
+  color: var(--ink2);
+}
+
+.parity-hero-sub {
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+
+/* Smaller panels */
+@container (max-height: 760px) {
+  .parity-moon-wrap { --s: 0.9; }
+}
+
+@container (max-height: 620px) {
+  .parity-moon-wrap { --s: 0.75; }
+}
+
+@container (max-height: 480px) {
+  .parity-moon-wrap { --s: 0.55; }
+}
+
+@container (max-width: 380px) {
+  .parity-moon-wrap { --s: 0.7; }
+}
+
+/* Bottom-docked DevTools: side by side */
+@container (min-width: 720px) and (max-height: 520px) {
+  .parity-hero {
+    flex-direction: row;
+    gap: 64px;
+    text-align: left;
+  }
+
+  .parity-moon-wrap { --s: 0.7; }
+
+  .parity-hero-copy {
+    align-items: flex-start;
+  }
+
+}
+
+/* Loading screen: shrink the animation on short panels */
+.parity-load-scene { zoom: 1; }
+
+@container (max-height: 700px) {
+  .parity-load-scene { zoom: 0.85; }
+}
+
+@container (max-height: 600px) {
+  .parity-load-scene { zoom: 0.7; }
+}
+
+@container (max-height: 480px) {
+  .parity-load-scene { zoom: 0.55; }
+}
